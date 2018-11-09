@@ -1,0 +1,4 @@
+template_path: templates/iam/iam-roles-policies.yaml
+stack_name: IAM-Roles-and-Policies
+# protect: true
+

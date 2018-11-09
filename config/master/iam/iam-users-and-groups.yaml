@@ -1,0 +1,3 @@
+template_path: templates/iam/iam-users-and-groups.yaml
+stack_name: IAM-UsersAndGroups
+# protect: 

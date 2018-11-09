@@ -1,0 +1,97 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: IAM Roles and Policies
+
+Mappings:
+  roles:
+    xmission-au:
+      administrator: arn:aws:iam::431672089311:role/Administrator
+      viewonly: arn:aws:iam::431672089311:role/ViewOnly
+
+Resources:
+  PolicyGroupEveryone:
+    Type: AWS::IAM::Policy
+    Properties:
+      Groups:
+        - !ImportValue iam-group-everyone
+      PolicyName: EveryoneGroup
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: IAMReadOnly
+            Effect: Allow
+            Action:
+              - iam:Get*
+              - iam:List*
+            Resource:
+              - "*"
+          - Sid: ManageOwnPassword
+            Effect: Allow
+            Action:
+              - iam:ChangePassword
+              - iam:*LoginProfile
+              - iam:*AccessKey*
+              - iam:*SSHPublicKey*
+            Resource:
+              - arn:aws:iam::676197543816:user/${aws:username}
+          - Sid: AllowUsersToCreateEnableResyncDeleteTheirOwnVirtualMFADevice
+            Effect: Allow
+            Action:
+              - iam:CreateVirtualMFADevice
+              - iam:EnableMFADevice
+              - iam:ResyncMFADevice
+              - iam:DeleteVirtualMFADevice
+            Resource:
+              - arn:aws:iam::676197543816:mfa/${aws:username}
+              - arn:aws:iam::676197543816:user/${aws:username}
+          - Sid: AllowUsersToDeactivateTheirOwnVirtualMFADevice
+            Effect: Allow
+            Action:
+              - iam:DeactivateMFADevice
+            Resource:
+              - arn:aws:iam::676197543816:mfa/${aws:username}
+              - arn:aws:iam::676197543816:user/${aws:username}
+            Condition:
+              Bool:
+                "aws:MultiFactorAuthPresent": true
+          - Sid: GuardDuty
+            Effect: Allow
+            Action:
+              - guardduty:Get*
+              - guardduty:List*
+            Resource:
+              - "*"
+
+  PolicyGroupXissionAuAdmin:
+    Type: AWS::IAM::Policy
+    Properties:
+      Groups:
+        - !ImportValue iam-group-xmission-au-admin
+      PolicyName: XmissionAuAdmin
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowSwitchRoleToAdmin
+            Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Resource:
+              - !FindInMap [roles, xmission-au, administrator]
+
+
+  PolicyGroupXissionAuViewOnly:
+    Type: AWS::IAM::Policy
+    Properties:
+      Groups:
+        - !ImportValue iam-group-xmission-au-view-only
+      PolicyName: XmissionAuViewOnly
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowSwitchRoleToViewOnly
+            Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Resource:
+              - !FindInMap [roles, xmission-au, viewonly]

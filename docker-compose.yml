@@ -1,0 +1,36 @@
+---
+version: '3'
+services:
+
+  aws:
+    image: contino/aws-cli
+    env_file: .env
+    entrypoint: aws
+    volumes:
+      - ~/.aws:/root/.aws:ro
+      - .:/opt/app:rw
+    working_dir: /opt/app
+
+  yamllint:
+    image: sdesbure/yamllint
+    env_file: .env
+    working_dir: /srv/app
+    volumes:
+      - .:/srv/app:Z
+
+  sceptre:
+    image: contino/sceptre
+    env_file: .env
+    working_dir: /opt/app
+    volumes:
+      - ~/.aws:/root/.aws:ro
+      - .:/opt/app:rw
+
+  cfn-python-lint:
+    image: amaysim/cfn-python-lint:latest
+    network_mode: "none"
+    entrypoint: ''
+    env_file: .env
+    working_dir: /srv/app
+    volumes:
+      - .:/srv/app:Z

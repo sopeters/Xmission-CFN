@@ -1,0 +1,57 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: IAM Users and Groups
+
+Resources:
+
+  UserSvenRW:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: svenrw
+      Groups:
+        - !Ref GroupEveryone
+        - !Ref GroupXmissionAuAdmin
+
+  UserSvenRO:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: svenro
+      Groups:
+        - !Ref GroupEveryone
+
+  GroupXmissionAuAdmin:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: XmissionAuAdmin
+
+  GroupXmissionAuViewOnly:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: XmissionAuViewOnly
+
+  GroupEveryone:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Everyone
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+
+Outputs:
+  GroupEveryone:
+    Description: Default Everyone IAM Group
+    Value: !Ref GroupEveryone
+    Export:
+      Name: iam-group-everyone
+
+  GroupXmissionAuAdmin:
+    Description: Admins for Xmission AU
+    Value: !Ref GroupXmissionAuAdmin
+    Export:
+      Name: iam-group-xmission-au-admin
+
+  GroupXmissionAuViewOnly:
+    Description: Read Only for Xmission AU
+    Value: !Ref GroupXmissionAuViewOnly
+    Export:
+      Name: iam-group-xmission-au-view-only

@@ -1,0 +1,2 @@
+template_path: templates/iam/iam-roles.yaml
+stack_name: IAM-Roles
