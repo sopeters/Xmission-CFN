@@ -37,6 +37,21 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
 
+  GroupReadOnly:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Read-Only
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+
+  GroupAdmin:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: Admin
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/Billing
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
 Outputs:
   GroupEveryone:
     Description: Default Everyone IAM Group
